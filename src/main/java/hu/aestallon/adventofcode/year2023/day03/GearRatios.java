@@ -1,30 +1,36 @@
 package hu.aestallon.adventofcode.year2023.day03;
 
 import hu.aestallon.adventofcode.year2023.day03.internal.Schematic;
-import hu.aestallon.adventofcode.year2023.util.AocIO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 public final class GearRatios {
 
-  private static final Logger log = LoggerFactory.getLogger(GearRatios.class);
-
-  public static void main(String[] args) {
-    final char[][] rawSchematic = AocIO.lines("03", "input03.txt").stream()
+  public static GearRatios create(List<String> lines) {
+    final char[][] rawSchematic = lines.stream()
         .map(String::toCharArray)
         .toArray(char[][]::new);
+    return new GearRatios(new Schematic(rawSchematic));
+  }
 
-    final var schematic = new Schematic(rawSchematic);
-    final long sum = schematic.numbersAdjacentToSymbols()
+  private final Schematic schematic;
+
+  private GearRatios(Schematic schematic) {
+    this.schematic = schematic;
+  }
+
+  long solvePart1() {
+    return schematic.numbersAdjacentToSymbols()
         .mapToLong(Schematic.Number::longVal)
         .sum();
-    log.info("The sum of all numbers adjacent to symbols is [ {} ]", sum);
+  }
 
-    final long gearRatioSum = schematic.gears()
+  long solvePart2() {
+    return schematic.gears()
         .mapToLong(it -> it.parts().stream()
             .mapToLong(Schematic.Number::longVal)
             .reduce(1L, (a, b) -> a * b))
         .sum();
-    log.info("The sum of all gear ratios in the schematic is [ {} ]", gearRatioSum);
   }
+
 }
