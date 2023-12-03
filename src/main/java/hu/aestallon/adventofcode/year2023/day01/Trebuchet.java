@@ -1,44 +1,17 @@
 package hu.aestallon.adventofcode.year2023.day01;
 
-import hu.aestallon.adventofcode.year2023.util.AocIO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.util.List;
 import java.util.OptionalInt;
 import java.util.stream.IntStream;
 
 public final class Trebuchet {
 
-  private static final Logger log = LoggerFactory.getLogger(Trebuchet.class);
+  static Trebuchet create(List<String> lines) {
+    return new Trebuchet(lines);
+  }
 
   private static int digit(int codePoint) {
     return Character.digit(codePoint, 10);
-  }
-
-  public static void main(String[] args) {
-    final var lines = AocIO.lines("01", "input01.txt");
-
-    // part 1:
-    final int sum = lines.stream()
-        .map(s -> s.chars().filter(Character::isDigit).toArray())
-        .filter(arr -> arr.length >= 1)
-        .mapToInt(arr -> digit(arr[0]) * 10 + digit(arr[arr.length - 1]))
-        .sum();
-    log.info("The sum of all calibration values is [ {} ]", sum);
-
-    // part 2:
-    final int correctedSum = lines.stream()
-        .mapToInt(s -> {
-          int[] nums = IntStream
-              .range(0, s.length())
-              .flatMap(i -> findIntAt(s, i).stream())
-              .toArray();
-          return nums.length == 0
-              ? 0
-              : nums[0] * 10 + nums[nums.length - 1];
-        })
-        .sum();
-    log.info("The sum of all corrected calibration values is [ {} ]", correctedSum);
   }
 
   private static OptionalInt findIntAt(String s, int idx) {
@@ -70,6 +43,31 @@ public final class Trebuchet {
     } else {
       return OptionalInt.empty();
     }
+  }
+
+  private final List<String> lines;
+
+  private Trebuchet(List<String> lines) {
+    this.lines = lines;
+  }
+
+  int solvePart1() {
+    return lines.stream()
+        .map(s -> s.chars().filter(Character::isDigit).toArray())
+        .filter(arr -> arr.length > 0)
+        .mapToInt(arr -> digit(arr[0]) * 10 + digit(arr[arr.length - 1]))
+        .sum();
+  }
+
+  int solvePart2() {
+    return lines.stream()
+        .map(s -> IntStream
+            .range(0, s.length())
+            .flatMap(i -> findIntAt(s, i).stream())
+            .toArray())
+        .filter(arr -> arr.length > 0)
+        .mapToInt(arr -> arr[0] * 10 + arr[arr.length - 1])
+        .sum();
   }
 
 }
