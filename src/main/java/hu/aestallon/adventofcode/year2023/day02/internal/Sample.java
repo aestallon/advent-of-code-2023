@@ -1,7 +1,5 @@
 package hu.aestallon.adventofcode.year2023.day02.internal;
 
-import hu.aestallon.adventofcode.year2023.day02.CubeConundrum;
-
 import java.util.Arrays;
 import java.util.Objects;
 

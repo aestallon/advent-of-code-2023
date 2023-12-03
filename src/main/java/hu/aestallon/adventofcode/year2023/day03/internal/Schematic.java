@@ -24,7 +24,6 @@ public class Schematic {
     return !(isDigit(c) || '.' == c);
   }
 
-  private final char[][]  raw;
   private final Token[][] tokens;
 
   public Schematic(char[][] raw) {
@@ -33,12 +32,11 @@ public class Schematic {
       throw new IllegalArgumentException(
           "Raw array is empty or contains empty rows! " + Arrays.toString(raw));
     }
-    this.raw = Objects.requireNonNull(raw, "raw must not be null!");
     this.tokens = new Token[raw.length][];
-    initTokens();
+    initTokens(raw);
   }
 
-  private void initTokens() {
+  private void initTokens(char[][] raw) {
     final List<Token> currentRowTokens = new ArrayList<>();
     final List<Character> currentNum = new ArrayList<>();
     for (int row = 0; row < raw.length; row++) {
@@ -106,10 +104,9 @@ public class Schematic {
       endCol = endCoordinate.col();
       value = characters.stream()
           .map(String::valueOf)
-          .collect(
-              collectingAndThen(
-                  joining(),
-                  Long::parseLong));
+          .collect(collectingAndThen(
+              joining(),
+              Long::parseLong));
     }
 
     public boolean isAdjacentToSymbols() {
