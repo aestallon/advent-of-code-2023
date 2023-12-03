@@ -71,19 +71,18 @@ public class Schematic {
   }
 
   public Stream<Number> numbersAdjacentToSymbols() {
-    return Arrays.stream(tokens)
-        .flatMap(Arrays::stream)
-        .filter(t -> t instanceof Number)
-        .map(Number.class::cast)
-        .filter(Number::isAdjacentToSymbols);
+    return tokens(Number.class).filter(Number::isAdjacentToSymbols);
   }
 
   public Stream<Gear> gears() {
+    return tokens(Symbol.class).flatMap(s -> s.asGear().stream());
+  }
+
+  private <T extends Token> Stream<T> tokens(Class<T> tokenType) {
     return Arrays.stream(tokens)
         .flatMap(Arrays::stream)
-        .filter(t -> t instanceof Symbol)
-        .map(Symbol.class::cast)
-        .flatMap(s -> s.asGear().stream());
+        .filter(tokenType::isInstance)
+        .map(tokenType::cast);
   }
 
   private record Coordinate(int row, int col) {}
