@@ -11,6 +11,10 @@ public final class Trebuchet {
 
   private static final Logger log = LoggerFactory.getLogger(Trebuchet.class);
 
+  private static int digit(int codePoint) {
+    return Character.digit(codePoint, 10);
+  }
+
   public static void main(String[] args) {
     final var lines = AocIO.lines("01", "input01.txt");
 
@@ -18,11 +22,7 @@ public final class Trebuchet {
     final int sum = lines.stream()
         .map(s -> s.chars().filter(Character::isDigit).toArray())
         .filter(arr -> arr.length >= 1)
-        .mapToInt(arr -> {
-          final char c1 = (char) arr[0];
-          final char c2 = (char) arr[arr.length - 1];
-          return Integer.parseInt(new String(new char[]{c1, c2}));
-        })
+        .mapToInt(arr -> digit(arr[0]) * 10 + digit(arr[arr.length - 1]))
         .sum();
     log.info("The sum of all calibration values is [ {} ]", sum);
 
@@ -33,7 +33,9 @@ public final class Trebuchet {
               .range(0, s.length())
               .flatMap(i -> findIntAt(s, i).stream())
               .toArray();
-          return nums[0] * 10 + nums[nums.length - 1];
+          return nums.length == 0
+              ? 0
+              : nums[0] * 10 + nums[nums.length - 1];
         })
         .sum();
     log.info("The sum of all corrected calibration values is [ {} ]", correctedSum);
