@@ -2,33 +2,35 @@ package hu.aestallon.adventofcode.year2023.day02;
 
 import hu.aestallon.adventofcode.year2023.day02.internal.Game;
 import hu.aestallon.adventofcode.year2023.day02.internal.Sample;
-import hu.aestallon.adventofcode.year2023.util.AocIO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 public final class CubeConundrum {
 
-  private static final Logger log = LoggerFactory.getLogger(CubeConundrum.class);
-
-  public static void main(String[] args) {
-    final var bound = Sample.of(12, 13, 14);
-    final var games = AocIO.lines("02", "input02.txt").stream()
+  public static CubeConundrum create(List<String> lines) {
+    return new CubeConundrum(lines.stream()
         .map(Game::parse)
-        .toList();
+        .toList());
+  }
 
-    // part 1:
-    final int sum = games.stream()
+  private final List<Game> games;
+
+  private CubeConundrum(List<Game> games) {
+    this.games = games;
+  }
+
+  int solvePart1(final Sample bound) {
+    return games.stream()
         .filter(it -> it.isPossible(bound))
         .mapToInt(Game::id)
         .sum();
-    log.info("The sum of the possible games with bounds [ {} ] is [ {} ]", bound, sum);
+  }
 
-    // part 2:
-    final long powerSum = games.stream()
+  long solvePart2() {
+    return games.stream()
         .map(Game::lowerBound)
         .mapToLong(Sample::power)
         .sum();
-    log.info("The sum of the power of the minimum enveloping sets is [ {} ]", powerSum);
   }
 
 }
