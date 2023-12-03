@@ -22,10 +22,8 @@ public final class GearRatios {
 
     final long gearRatioSum = schematic.gears()
         .mapToLong(it -> it.parts().stream()
-            .reduce(
-                1L,
-                (product, part) -> product * part.longVal(),
-                (l1, l2) -> l1 * l2))
+            .mapToLong(Schematic.Number::longVal)
+            .reduce(1L, (a, b) -> a * b))
         .sum();
     log.info("The sum of all gear ratios in the schematic is [ {} ]", gearRatioSum);
   }
