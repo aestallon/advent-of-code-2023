@@ -1,6 +1,5 @@
 package hu.aestallon.adventofcode.year2023.day03.internal;
 
-import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -92,6 +91,7 @@ public class Schematic {
   public sealed interface Token permits Number, Symbol {
     boolean isAdjacent(Token that);
 
+    @SuppressWarnings("unused")
     Set<Token> adjacentTo();
   }
 
