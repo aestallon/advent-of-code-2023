@@ -23,15 +23,15 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class Scratchcard {
+public class Card {
 
-  private static final Logger log = LoggerFactory.getLogger(Scratchcard.class);
+  private static final Logger log = LoggerFactory.getLogger(Card.class);
 
   public static void logParseError(String input, String reason) {
-    log.error("Failed to parse [ {} ] as [ Scratchcard ] - {}!", input, reason);
+    log.error("Failed to parse [ {} ] as [ Card ] - {}!", input, reason);
   }
 
-  public static Scratchcard parse(String s) {
+  public static Card parse(String s) {
     if (s == null || s.isBlank()) {
       logParseError(s, "Input is null or blank");
       throw new IllegalArgumentException("s must not be null or empty!");
@@ -53,7 +53,7 @@ public class Scratchcard {
 
     final var winningNumbers = processBodyPart(bodyParts[0]);
     final var playingNumbers = processBodyPart(bodyParts[1]);
-    return new Scratchcard(id, winningNumbers, playingNumbers);
+    return new Card(id, winningNumbers, playingNumbers);
   }
 
   private static Set<Integer> processBodyPart(String s) {
@@ -68,7 +68,7 @@ public class Scratchcard {
   private final Set<Integer> playingNumbers;
   private final int          matches;
 
-  private Scratchcard(int id, Set<Integer> winningNumbers, Set<Integer> playingNumbers) {
+  private Card(int id, Set<Integer> winningNumbers, Set<Integer> playingNumbers) {
     this.id = id;
     this.winningNumbers = winningNumbers;
     this.playingNumbers = playingNumbers;

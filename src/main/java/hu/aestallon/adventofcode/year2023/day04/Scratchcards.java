@@ -16,38 +16,33 @@
 
 package hu.aestallon.adventofcode.year2023.day04;
 
-import hu.aestallon.adventofcode.year2023.day04.internal.Scratchcard;
+import hu.aestallon.adventofcode.year2023.day04.internal.Card;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import static java.util.stream.Collectors.toMap;
 
 public class Scratchcards {
 
   static Scratchcards create(List<String> lines) {
-    return new Scratchcards(lines.stream().map(Scratchcard::parse).toList());
+    return new Scratchcards(lines.stream().map(Card::parse).toList());
   }
 
-  private final List<Scratchcard> scratchcards;
+  private final List<Card> cards;
 
-  private Scratchcards(List<Scratchcard> scratchcards) {this.scratchcards = scratchcards;}
+  private Scratchcards(List<Card> cards) {this.cards = cards;}
 
   long solvePart1() {
-    return scratchcards.stream()
-        .mapToLong(Scratchcard::value)
+    return cards.stream()
+        .mapToLong(Card::value)
         .sum();
   }
 
   long solvePart2() {
-    final var copyCounts = new int[scratchcards.size()];
+    final var copyCounts = new int[cards.size()];
     Arrays.fill(copyCounts, 1);
 
-    for (var card : scratchcards) {
+    for (var card : cards) {
       final int id = card.id();
       final int count = copyCounts[id - 1];
       final int matches = card.matches();

@@ -16,8 +16,11 @@
 
 package hu.aestallon.adventofcode.year2023.day01;
 
+import hu.aestallon.adventofcode.year2023.util.Digits;
+
 import java.util.List;
 import java.util.OptionalInt;
+import java.util.function.Function;
 import java.util.stream.IntStream;
 
 import static hu.aestallon.adventofcode.year2023.util.Digits.digit;
@@ -66,19 +69,18 @@ public final class Trebuchet {
   }
 
   int solvePart1() {
-    return lines.stream()
-        .map(s -> s.chars().filter(Character::isDigit).toArray())
-        .filter(arr -> arr.length > 0)
-        .mapToInt(arr -> digit(arr[0]) * 10 + digit(arr[arr.length - 1]))
-        .sum();
+    return solve(s -> s.chars().filter(Character::isDigit).map(Digits::digit).toArray());
   }
 
   int solvePart2() {
+    return solve(s -> IntStream.range(0, s.length())
+        .flatMap(i -> findIntAt(s, i).stream())
+        .toArray());
+  }
+
+  private int solve(Function<String, int[]> stringToDigits) {
     return lines.stream()
-        .map(s -> IntStream
-            .range(0, s.length())
-            .flatMap(i -> findIntAt(s, i).stream())
-            .toArray())
+        .map(stringToDigits)
         .filter(arr -> arr.length > 0)
         .mapToInt(arr -> arr[0] * 10 + arr[arr.length - 1])
         .sum();
