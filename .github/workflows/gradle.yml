@@ -22,7 +22,7 @@ jobs:
     - name: Set up Gradle
       uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
     - name: Run build with Gradle wrapper
-      run: ./gradlew build
+      run: ./gradlew test --info
     - name: Upload build reports
       uses: actions/upload-artifact@v3
       if: always()
