@@ -43,12 +43,9 @@ public final class Trebuchet {
   }
 
   private static OptionalInt match(String s) {
-    for (int i = 1; i <= NUMBERS.length; i++) {
-      if (s.startsWith(String.valueOf(i)) || s.startsWith(NUMBERS[i - 1])) {
-        return OptionalInt.of(i);
-      }
-    }
-    return OptionalInt.empty();
+    return IntStream.rangeClosed(1, NUMBERS.length)
+        .filter(i -> s.startsWith(String.valueOf(i)) || s.startsWith(NUMBERS[i - 1]))
+        .findFirst();
   }
 
   private final List<String> lines;
