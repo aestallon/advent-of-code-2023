@@ -16,6 +16,8 @@
 
 package hu.aestallon.adventofcode.year2023.day03.internal;
 
+import hu.aestallon.adventofcode.year2023.util.Digits;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,17 +29,10 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.collectingAndThen;
-import static java.util.stream.Collectors.joining;
-
 public class Schematic {
 
-  private static boolean isDigit(final char c) {
-    return Character.isDigit(c);
-  }
-
   private static boolean isSymbol(final char c) {
-    return !(isDigit(c) || '.' == c);
+    return !(Digits.isDigit(c) || '.' == c);
   }
 
   private final Token[][] tokens;
@@ -54,16 +49,16 @@ public class Schematic {
 
   private void initTokens(char[][] raw) {
     final List<Token> currentRowTokens = new ArrayList<>();
-    final List<Character> currentNum = new ArrayList<>();
+    int currentNum = 0;
     for (int row = 0; row < raw.length; row++) {
       for (int col = 0; col < raw[row].length; col++) {
         final char c = raw[row][col];
-        if (isDigit(c)) {
-          currentNum.add(c);
+        if (Digits.isDigit(c)) {
+          currentNum = currentNum * 10 + Digits.digit(c);
         } else {
-          if (!currentNum.isEmpty()) {
+          if (currentNum != 0) {
             currentRowTokens.add(new Number(currentNum, new Coordinate(row, col - 1)));
-            currentNum.clear();
+            currentNum = 0;
           }
 
           if (isSymbol(c)) {
@@ -73,9 +68,9 @@ public class Schematic {
       }
 
       // handle number termination at the end of a row:
-      if (!currentNum.isEmpty()) {
+      if (currentNum != 0) {
         currentRowTokens.add(new Number(currentNum, new Coordinate(row, raw[row].length - 1)));
-        currentNum.clear();
+        currentNum = 0;
       }
 
       final Token[] rowTokens = currentRowTokens.toArray(Token[]::new);
@@ -114,15 +109,11 @@ public class Schematic {
     private final int  endCol;
     private final long value;
 
-    private Number(final List<Character> characters, Coordinate endCoordinate) {
+    private Number(final long value, Coordinate endCoordinate) {
       row = endCoordinate.row();
-      startCol = endCoordinate.col() - characters.size() + 1;
+      startCol = endCoordinate.col() - Digits.digitCount(value) + 1;
       endCol = endCoordinate.col();
-      value = characters.stream()
-          .map(String::valueOf)
-          .collect(collectingAndThen(
-              joining(),
-              Long::parseLong));
+      this.value = value;
     }
 
     public boolean isAdjacentToSymbols() {
@@ -164,7 +155,10 @@ public class Schematic {
       if (this == o) {return true;}
       if (o == null || getClass() != o.getClass()) {return false;}
       Number number = (Number) o;
-      return row == number.row && startCol == number.startCol && endCol == number.endCol && value == number.value;
+      return row == number.row
+             && startCol == number.startCol
+             && endCol == number.endCol
+             && value == number.value;
     }
 
     @Override

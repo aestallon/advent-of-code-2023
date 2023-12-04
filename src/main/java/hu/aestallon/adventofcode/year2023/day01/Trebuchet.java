@@ -20,14 +20,12 @@ import java.util.List;
 import java.util.OptionalInt;
 import java.util.stream.IntStream;
 
+import static hu.aestallon.adventofcode.year2023.util.Digits.digit;
+
 public final class Trebuchet {
 
   static Trebuchet create(List<String> lines) {
     return new Trebuchet(lines);
-  }
-
-  private static int digit(int codePoint) {
-    return Character.digit(codePoint, 10);
   }
 
   private static OptionalInt findIntAt(String s, int idx) {
