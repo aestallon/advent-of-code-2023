@@ -23,7 +23,7 @@ import java.util.OptionalInt;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
-public final class Trebuchet {
+final class Trebuchet {
 
   private static final String[] NUMBERS = {
       "one", "two", "three",
@@ -31,15 +31,8 @@ public final class Trebuchet {
       "seven", "eight", "nine"
   };
 
-  static Trebuchet create(List<String> lines) {
-    return new Trebuchet(lines);
-  }
-
   private static OptionalInt findIntAt(String s, int idx) {
-    if (idx >= s.length()) {
-      return OptionalInt.empty();
-    }
-    return match(s.substring(idx));
+    return (idx >= s.length()) ? OptionalInt.empty() : match(s.substring(idx));
   }
 
   private static OptionalInt match(String s) {
@@ -50,7 +43,7 @@ public final class Trebuchet {
 
   private final List<String> lines;
 
-  private Trebuchet(List<String> lines) {
+  Trebuchet(List<String> lines) {
     this.lines = lines;
   }
 
