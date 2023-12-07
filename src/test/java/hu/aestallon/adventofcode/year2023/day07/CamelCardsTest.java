@@ -41,7 +41,7 @@ class CamelCardsTest {
   }
 
   @Test
-  void probelmInputYieldsCorrectResult() {
+  void problemInputYieldsCorrectResult() {
     final var input = AocIO.lines("07", "input07.txt");
     final var problem = new CamelCards(input);
 

@@ -41,7 +41,7 @@ final class CamelCards {
   }
 
   private long solve(Function<String, Hand> handParser) {
-    int[] bids = lines.stream()
+    final int[] bids = lines.stream()
         .map(handParser)
         .sorted(reverseOrder())
         .mapToInt(Hand::bid)
