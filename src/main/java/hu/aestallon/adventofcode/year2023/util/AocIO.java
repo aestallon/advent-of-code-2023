@@ -35,11 +35,17 @@ public final class AocIO {
     final var loc = Arrays.stream(path).collect(Collectors.joining("/", "/", ""));
 
     log.debug("Loading classpath resource from [ {} ]", loc);
-    try (var in = AocIO.class.getResourceAsStream(loc);
-         var reader = new InputStreamReader(in);
-         var br = new BufferedReader(reader);
-         var lines = br.lines()) {
-      return lines.toList();
+    try (final var in = AocIO.class.getResourceAsStream(loc)) {
+      if (in == null) {
+        log.error("Could not access resource from [ {} ]", loc);
+        return Collections.emptyList();
+      }
+
+      try (var reader = new InputStreamReader(in);
+           var br = new BufferedReader(reader);
+           var lines = br.lines()) {
+        return lines.toList();
+      }
     } catch (IOException e) {
       log.error(e.getMessage(), e);
       return Collections.emptyList();
