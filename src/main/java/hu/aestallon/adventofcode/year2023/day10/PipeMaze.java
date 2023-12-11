@@ -191,11 +191,10 @@ final class PipeMaze {
           loopIndices.add(c);
           continue;
         }
-        final boolean odd = (loopIndices.stream()
-                                 .map(i -> rowSymbols[i])
-                                 .filter(EnumSet.of(Symbol.NS, Symbol.NW, Symbol.NE)::contains)
-                                 .count() & 1) == 1;
-        if (odd) {res++;}
+        res += loopIndices.stream()
+                   .map(i -> rowSymbols[i])
+                   .filter(EnumSet.of(Symbol.NS, Symbol.NW, Symbol.NE)::contains)
+                   .count() & 1;
       }
     }
     return res;

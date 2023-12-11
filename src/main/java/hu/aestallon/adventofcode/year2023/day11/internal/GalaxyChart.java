@@ -36,10 +36,9 @@ public final class GalaxyChart {
     for (int row = 0; row < chars.length; row++) {
       final int expandedRowCount = countOfItemsLowerThan(emptyRowIndices, row);
       for (int col = 0; col < chars[row].length; col++) {
-        final int expandedColCount = countOfItemsLowerThan(emptyColIndices, col);
-        final char c = chars[row][col];
-        if (c == GALAXY_MARK) {
+        if (chars[row][col] == GALAXY_MARK) {
 
+          final int expandedColCount = countOfItemsLowerThan(emptyColIndices, col);
           final int x = (col - expandedColCount) + (expandedColCount * expansionRate);
           final int y = (row - expandedRowCount) + (expandedRowCount * expansionRate);
           final Position p = new Position(x, y);

@@ -76,10 +76,10 @@ class IfYouGiveASeedAFertilizerTest {
     final var problem = new IfYouGiveASeedAFertilizer(input);
 
     log.info("The lowest location is [ {} ]", problem.solvePart1());
-    log.info("The lowest reinterpreted location is [ {} ]", problem.solvePart2());
+    // log.info("The lowest reinterpreted location is [ {} ]", problem.solvePart2());
 
     assertThat(problem.solvePart1()).isEqualTo(1_181_555_926L);
-    //assertThat(problem.solvePart2()).isEqualTo(11_787_590L);
+    // assertThat(problem.solvePart2()).isEqualTo(11_787_590L);
   }
 
 }

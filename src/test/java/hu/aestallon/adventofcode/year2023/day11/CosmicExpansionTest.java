@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-
 class CosmicExpansionTest {
 
   private static final Logger log = LoggerFactory.getLogger(CosmicExpansionTest.class);
