@@ -41,4 +41,5 @@ final class HotSprings {
         .mapToLong(RowOfSprings::solve)
         .sum();
   }
+
 }

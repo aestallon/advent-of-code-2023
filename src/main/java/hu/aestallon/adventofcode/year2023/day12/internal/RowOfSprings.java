@@ -24,13 +24,13 @@ import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.joining;
 
-public record RowOfSprings(List<State> springs, List<Integer> damagedRuns) {
+public record RowOfSprings(List<SpringState> springs, List<Integer> damagedRuns) {
 
   private static final Map<RowOfSprings, Long> MEMO = new HashMap<>();
 
   public static RowOfSprings parse(String s) {
     final var parts = s.split("\\s");
-    final var states = parts[0].chars().mapToObj(State::ofCodePoint).toList();
+    final var states = parts[0].chars().mapToObj(SpringState::ofCodePoint).toList();
     final var damagedRuns = Arrays.stream(parts[1].split(","))
         .map(Integer::parseInt)
         .toList();
@@ -42,7 +42,7 @@ public record RowOfSprings(List<State> springs, List<Integer> damagedRuns) {
     final var states = IntStream.range(0, 5)
         .mapToObj(__ -> parts[0])
         .collect(joining("?")).chars()
-        .mapToObj(State::ofCodePoint)
+        .mapToObj(SpringState::ofCodePoint)
         .toList();
     final var runs = Arrays.stream(parts[1].split(","))
         .map(Integer::parseInt)
@@ -60,14 +60,13 @@ public record RowOfSprings(List<State> springs, List<Integer> damagedRuns) {
     }
 
     return switch (springs.getFirst()) {
-      case OPERATIONAL -> new RowOfSprings(springs.subList(1, springs.size()), damagedRuns).solve();
-      case DAMAGED -> solveInternalAndMemoise();
-      case UNKNOWN -> new RowOfSprings(springs.subList(1, springs.size()), damagedRuns).solve()
-                      + solveInternalAndMemoise();
+      case OPERATIONAL -> shrinkBy(1, 0).solve();
+      case DAMAGED -> solveInternalAndMemoize();
+      case UNKNOWN -> shrinkBy(1, 0).solve() + solveInternalAndMemoize();
     };
   }
 
-  private long solveInternalAndMemoise() {
+  private long solveInternalAndMemoize() {
     final long x = solveInternal();
     MEMO.put(this, x);
     return x;
@@ -88,22 +87,34 @@ public record RowOfSprings(List<State> springs, List<Integer> damagedRuns) {
       return 0;
     }
 
-    if (springs.stream().limit(firstRun).anyMatch(it -> State.OPERATIONAL == it)) {
+    if (springs.stream().limit(firstRun).anyMatch(it -> SpringState.OPERATIONAL == it)) {
       return 0;
     }
 
     if (springs.size() == firstRun) {
-      return damagedRuns.size() == 1 ? 1 : 0;
+      return (damagedRuns.size() == 1) ? 1 : 0;
     }
 
-    if (springs.get(firstRun) == State.DAMAGED) {
+    if (springs.get(firstRun) == SpringState.DAMAGED) {
       return 0;
     }
 
+    return shrinkBy(firstRun + 1, 1).solve();
+  }
+
+  /**
+   * A copy of row with some amounts of spring-marks and run inscriptions dropped.
+   *
+   * @param spring the amount of {@link SpringState} spring marks to drop, >= 0
+   * @param run    the amount of {@link #damagedRuns} markings to drop, >= 0
+   *
+   * @return a new {@link RowOfSprings} with their leftmost {@code spring} markings and {@code run}
+   * runs dropped
+   */
+  private RowOfSprings shrinkBy(int spring, int run) {
     return new RowOfSprings(
-        springs.subList(firstRun + 1, springs.size()),
-        damagedRuns.subList(1, damagedRuns.size()))
-        .solve();
+        springs.subList(spring, springs.size()),
+        damagedRuns.subList(run, damagedRuns.size()));
   }
 
   @Override

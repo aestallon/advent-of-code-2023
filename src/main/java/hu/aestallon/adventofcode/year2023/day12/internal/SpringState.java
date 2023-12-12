@@ -16,23 +16,23 @@
 
 package hu.aestallon.adventofcode.year2023.day12.internal;
 
-public enum State {
+public enum SpringState {
   OPERATIONAL('.'),
   DAMAGED('#'),
   UNKNOWN('?');
 
-  static State ofCodePoint(final int codePoint) {
+  static SpringState ofCodePoint(final int codePoint) {
     return switch (codePoint) {
       case '.' -> OPERATIONAL;
       case '#' -> DAMAGED;
       case '?' -> UNKNOWN;
-      default -> throw new IllegalArgumentException((char) codePoint + " is not a valid State!");
+      default -> throw new IllegalArgumentException((char) codePoint + " is not a valid SpringState!");
     };
   }
 
   private final int codePoint;
 
-  State(int codePoint) {
+  SpringState(int codePoint) {
     this.codePoint = codePoint;
   }
 
