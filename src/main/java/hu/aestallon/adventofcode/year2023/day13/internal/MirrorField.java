@@ -78,28 +78,24 @@ public final class MirrorField {
 
 
   private Set<Integer> verticalReflectionCandidates(Material[] mats) {
-    final var res = new TreeSet<Integer>();
-    for (int i = 1; i < mats.length; i++) {
-      final int fi = i;
-      final int span = Math.min(i, mats.length - i);
-      if (IntStream.rangeClosed(1, span).allMatch(x -> mats[fi - x] == mats[fi + x - 1])) {
-        res.add(i);
-      }
-    }
-    return res;
+    return IntStream.range(1, mats.length)
+        .filter(i -> {
+          final int span = Math.min(i, mats.length - i);
+          return IntStream.rangeClosed(1, span).allMatch(x -> mats[i - x] == mats[i + x - 1]);
+        })
+        .boxed()
+        .collect(Collectors.toSet());
   }
 
   private Set<Integer> horizontalReflections() {
-    final var res = new TreeSet<Integer>();
-    for (int i = 1; i < materials.length; i++) {
-      final int fi = i;
-      final int span = Math.min(i, materials.length - i);
-      if (IntStream.rangeClosed(1, span)
-          .allMatch(x -> Arrays.equals(materials[fi - x], materials[fi + x - 1]))) {
-        res.add(i);
-      }
-    }
-    return res;
+    return IntStream.range(1, materials.length)
+        .filter(i -> {
+          final int span = Math.min(i, materials.length - i);
+          return IntStream.rangeClosed(1, span)
+              .allMatch(x -> Arrays.equals(materials[i - x], materials[i + x - 1]));
+        })
+        .boxed()
+        .collect(Collectors.toSet());
   }
 
   public Reflection fixSmudge() {
