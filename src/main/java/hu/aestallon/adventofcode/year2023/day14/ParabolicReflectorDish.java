@@ -31,6 +31,8 @@ import static java.util.stream.Collectors.joining;
 
 final class ParabolicReflectorDish {
 
+  final long cycleNr;
+
   private final int cols;
   private final int rows;
 
@@ -38,6 +40,8 @@ final class ParabolicReflectorDish {
   private final Set<Position> positions;
 
   ParabolicReflectorDish(List<String> lines) {
+    this.cycleNr = 0L;
+
     this.cols = lines.getFirst().length();
     this.rows = lines.size();
 
@@ -61,7 +65,9 @@ final class ParabolicReflectorDish {
     }
   }
 
-  private ParabolicReflectorDish(int rows, int cols, Set<Rock<?>> rocks) {
+  private ParabolicReflectorDish(long cycleNr, int rows, int cols, Set<Rock<?>> rocks) {
+    this.cycleNr = cycleNr;
+
     this.rows = rows;
     this.cols = cols;
     this.rocks = rocks;
@@ -69,16 +75,23 @@ final class ParabolicReflectorDish {
   }
 
   ParabolicReflectorDish tilt(Direction direction) {
+    return tilt(cycleNr, direction);
+  }
+
+  private ParabolicReflectorDish tilt(long cycleNr, Direction direction) {
     final Set<Rock<?>> rolledRocks = rocks.stream()
         .sorted(comparator(direction))
         .map(it -> it.roll(direction))
         .map(it -> (Rock<?>) it)
         .collect(Collectors.toSet());
-    return new ParabolicReflectorDish(rows, cols, rolledRocks);
+    return new ParabolicReflectorDish(cycleNr, rows, cols, rolledRocks);
   }
 
   ParabolicReflectorDish cycle() {
-    return tilt(Direction.NORTH).tilt(Direction.WEST).tilt(Direction.SOUTH).tilt(Direction.EAST);
+    return tilt(Direction.NORTH)
+        .tilt(Direction.WEST)
+        .tilt(Direction.SOUTH)
+        .tilt(cycleNr + 1, Direction.EAST);
   }
 
   private Comparator<Rock<?>> comparator(Direction direction) {
@@ -107,7 +120,20 @@ final class ParabolicReflectorDish {
     rocks.forEach(it -> arr[it.position.row][it.position.col] = it.sign());
     return Arrays.stream(arr)
         .map(r -> String.join("", r))
-        .collect(joining(System.lineSeparator()));
+        .collect(joining("\n"));
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {return true;}
+    if (o == null || getClass() != o.getClass()) {return false;}
+    ParabolicReflectorDish that = (ParabolicReflectorDish) o;
+    return Objects.equals(rocks, that.rocks);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(rocks);
   }
 
   private final class Position implements Comparable<Position> {

@@ -22,6 +22,10 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ParabolicReflectorDishTest {
@@ -43,14 +47,22 @@ class ParabolicReflectorDishTest {
         #OO..#....""".lines().toList();
     var dish = new ParabolicReflectorDish(input);
     ParabolicReflectorDish tiltedNorth = dish.tilt(Direction.NORTH);
+    assertThat(tiltedNorth.toString()).isEqualTo("""
+        OOOO.#.O..
+        OO..#....#
+        OO..O##..O
+        O..#.OO...
+        ........#.
+        ..#....#.#
+        ..O..#.O.O
+        ..O.......
+        #....###..
+        #....#....""");
+
     long northernLoad = tiltedNorth.currentLoad(Direction.NORTH);
     assertThat(northernLoad).isEqualTo(136);
 
-    dish = new ParabolicReflectorDish(input);
-    for (int i = 0; i < 1_000; i++) {
-      dish = dish.cycle();
-    }
-    assertThat(dish.currentLoad(Direction.NORTH)).isEqualTo(64);
+    runPart2(input, 64L);
   }
 
   @Test
@@ -61,13 +73,41 @@ class ParabolicReflectorDishTest {
     log.info("Northern load after tilting north is [ {} ]", northernLoad);
     assertThat(northernLoad).isEqualTo(105_249L);
 
-    dish = new ParabolicReflectorDish(input);
-    // this is practically cheating: the round rocks will eventually reach an equilibrium, thus
-    // there is no need to actually run a billion cycles:
-    for (int i = 0; i < 1_000; i++) {
+    runPart2(input, 88_680L);
+  }
+
+  private void runPart2(final List<String> input, final long expected) {
+    var dish = new ParabolicReflectorDish(input);
+    // ParabolicReflectorDish is constructed so only the rocks contribute to the equivalence
+    // examination: two dishes are considered equal, even if they differ in their cycle number.
+    final Set<ParabolicReflectorDish> memo = new HashSet<>();
+    final int limit = 1_000_000_000;
+    for (int i = 0; i < limit; i++) {
       dish = dish.cycle();
+      if (memo.contains(dish)) {
+        final long startIdx = memo.stream().filter(dish::equals).findFirst().orElseThrow().cycleNr;
+        log.debug("The CYCLE started with cycle [ {} ]", startIdx);
+
+        final long cycleSize = dish.cycleNr - startIdx;
+        log.debug("The CYCLE size was [ {} ]", cycleSize);
+
+        final long idxOffset = (limit - startIdx) % cycleSize;
+        log.debug("The experiment ends with CYCLE offset of [ {} ]", idxOffset);
+
+        final long finalIdx = startIdx + idxOffset;
+        log.debug("The experiment ends on the same state as CYCLE member [ {} ]", finalIdx);
+
+        dish = memo.stream().filter(it -> finalIdx == it.cycleNr).findFirst().orElseThrow();
+        break;
+
+      } else {
+        memo.add(dish);
+      }
     }
-    assertThat(dish.currentLoad(Direction.NORTH)).isEqualTo(88_680L);
+    final long northernLoad = dish.currentLoad(Direction.NORTH);
+    log.info("The northern load at the end of the cycle is [ {} ]", northernLoad);
+
+    assertThat(northernLoad).isEqualTo(expected);
   }
 
 }
