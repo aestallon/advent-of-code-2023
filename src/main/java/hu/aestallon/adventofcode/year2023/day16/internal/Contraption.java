@@ -61,6 +61,10 @@ public class Contraption {
   }
 
   public Stream<Set<Position>> runAll() {
+    return prepare().map(this::run);
+  }
+
+  public Stream<Light> prepare() {
     return Arrays.stream(Direction.values())
         .flatMap(it -> switch (it) {
           case E -> IntStream.range(0, elements.length)
@@ -71,8 +75,7 @@ public class Contraption {
               .mapToObj(i -> new Light(it, new Position(elements.length - 1, i)));
           case S -> IntStream.range(0, elements[0].length)
               .mapToObj(i -> new Light(it, new Position(0, i)));
-        })
-        .map(this::run);
+        });
   }
 
   private Element getElement(Position p) {
@@ -80,6 +83,52 @@ public class Contraption {
   }
   private boolean isOutOfBounds(Position p) {
     return p.r() < 0 || p.c() < 0 || p.r() >= elements.length || p.c() >= elements[0].length;
+  }
+
+
+  // -----------------------------------------------------------------------------------------------
+  // for visualisation:
+
+  public ContraptionRunner newRunner(Light light) {
+    return new ContraptionRunner(light);
+  }
+
+  public final class ContraptionRunner {
+
+    private final Set<Light> knownLights;
+    private Set<Light> runningLights;
+
+    public ContraptionRunner(Light startingLight) {
+      this.knownLights = new HashSet<>();
+      this.runningLights = new HashSet<>();
+      runningLights.add(startingLight);
+    }
+
+    public Set<Light> knownLights() {
+      return knownLights;
+    }
+
+    public int height() {
+      return elements.length;
+    }
+
+    public int width() {
+      return elements[0].length;
+    }
+
+    public boolean isComplete() {
+      return runningLights.isEmpty();
+    }
+
+    public void step() {
+      knownLights.addAll(runningLights);
+      runningLights = runningLights.stream()
+          .flatMap(it -> getElement(it.p()).handle(it).stream())
+          .filter(it -> !isOutOfBounds(it.p()))
+          .filter(it -> !knownLights.contains(it))
+          .collect(Collectors.toSet());
+    }
+
   }
 
 }

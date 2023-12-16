@@ -27,3 +27,20 @@ dependencies {
 test {
   useJUnitPlatform()
 }
+
+tasks.register('demo16', org.gradle.jvm.tasks.Jar) {
+  dependsOn 'test'
+  from(project.configurations.runtimeClasspath.collect {
+    it.isDirectory() ? it : zipTree(it)
+  }) {
+    exclude 'META-INF/INDEX.LIST', 'module-info.class'
+  }
+
+  from sourceSets.main.output
+  manifest {
+    attributes([
+        'Main-Class': 'hu.aestallon.adventofcode.year2023.day16.visualisation.Demo',
+    ])
+  }
+  setArchiveFileName 'demo-16.jar'
+}

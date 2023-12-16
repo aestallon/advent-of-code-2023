@@ -16,7 +16,7 @@
 
 package hu.aestallon.adventofcode.year2023.day16.internal;
 
-record Light(Direction d, Position p) {
+public record Light(Direction d, Position p) {
 
   Light move() {
     return new Light(d, new Position(p.r() + d.dr, p.c() + d.dc));
