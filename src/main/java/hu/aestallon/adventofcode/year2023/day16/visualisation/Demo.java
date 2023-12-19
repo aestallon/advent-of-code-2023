@@ -49,7 +49,6 @@ final class Demo extends JFrame {
   private void init() {
     setTitle("The Floor Will Be Lava");
     setSize(simulator.width() * SCALE, simulator.height() * SCALE);
-    setMenuBar(null);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
     Canvas canvas = new Canvas();
